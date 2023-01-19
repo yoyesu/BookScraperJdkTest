@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<!-- allows the use of thymeleaf expressions-->
+
+<head>
+    <title>Epub Downloader</title>
+
+    <!-- REPLACE HREF BELOW WITH th:href="@{/css/style.css}" -->
+    <link type="text/css" rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="utf-8" />
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+            integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+            crossorigin="anonymous"
+    />
+</head>
+
+<body>
+
+<main>
+    <h1>Ebook Downloader</h1>
+    <!--    <div id="nav_container"></div>-->
+
+    <section th:class="instructions">
+        <h2>Follow these instructions to start:</h2>
+        <ol>
+            <li>Go to <a th:href="www.epub.pub">https://www.epub.pub</a></li>
+            <li>Choose a book and get its url. Ex. "https://www.epub.pub/book/murder-book-by-thomas-perry"</li>
+            <li>Copy the part after "book/" -> "https://www.epub.pub/book/<b>murder-book-by-thomas-perry</b>"</li>
+            <li>Paste it in the box below... and enjoy reading!</li>
+        </ol>
+    </section>
+
+    <h3>Paste it here!</h3>
+    <form th:action="@{/{url}(url=${url})}" th:method="GET">
+        <label th:for="url">
+            <input th:type="text" th:id="serverId" th:name="url"/>
+        </label>
+        <label th:for="submit">
+            <input  th:type="submit" value="Submit" th:onsubmit=""/>
+        </label>
+    </form>
+
+</main>
+
+
+<footer>
+    <p>Ebook Downloader</p>
+</footer>
+
+</body>
+</html>
