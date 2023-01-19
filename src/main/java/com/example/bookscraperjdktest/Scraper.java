@@ -85,26 +85,6 @@ public class Scraper implements BooksRepository{
         return secondUrl;
     }
 
-    public void generateFileFromBookDTO(Book responseDTO) {
-        try
-        {
-            PrintWriter pr = new PrintWriter(bookTitle + ".txt");
-
-            Object[] listToArray = responseDTO.getSentences().toArray();
-            for (int i = 0; i< responseDTO.getSentences().size() ; i++)
-            {
-                pr.println(listToArray[i]);
-
-            }
-            pr.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            System.out.println("No such file exists.");
-        }
-    }
-
     private int gatherBookLines(Book responseDTO, String url) {
 
             try {
