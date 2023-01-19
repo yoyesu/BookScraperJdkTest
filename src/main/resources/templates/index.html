@@ -39,9 +39,9 @@
     </section>
 
     <h3>Paste it here!</h3>
-    <form th:action="@{/{url}(url=${url})}" th:method="GET">
+    <form th:action="@{/download}" th:method="POST" th:object="${config}">
         <label th:for="url">
-            <input th:type="text" th:id="serverId" th:name="url"/>
+            <input th:type="text" th:id="url-input" th:name="url" th:field="*{input}"/>
         </label>
         <label th:for="submit">
             <input  th:type="submit" value="Submit" th:onsubmit=""/>

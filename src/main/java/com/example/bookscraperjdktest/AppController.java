@@ -4,10 +4,7 @@ package com.example.bookscraperjdktest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -20,13 +17,15 @@ public class AppController {
 
     @GetMapping("/")
     public String getHomePage(Model model){
-        model.addAttribute("downloader", "downloader");
+        model.addAttribute("config", new UserInput());
+
         return "index";
     }
 
-    @RequestMapping("/{url}")
-    public void getBook(HttpServletResponse response, @PathVariable("url") String url) {
-
+    @PostMapping("/download")
+    public String getBook(HttpServletResponse response, @ModelAttribute("config") UserInput input, Model model) {
+        String url = input.getInput();
+        System.out.println("post method = " + url);
         Book responseDTO = booksRepository.getBookByUrl(url);
         String filename = responseDTO.getName();
 
@@ -49,5 +48,6 @@ public class AppController {
         }
 
 
+        return "redirect:/index";
     }
 }
