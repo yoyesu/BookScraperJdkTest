@@ -48,6 +48,6 @@ public class AppController {
         }
 
 
-        return "redirect:/index";
+        return "index";
     }
 }
