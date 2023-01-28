@@ -13,6 +13,7 @@ import org.apache.http.conn.ssl.SSLContexts;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,6 +28,34 @@ public class Scraper implements BooksRepository{
             client.getOptions().setCssEnabled(false);
             client.getOptions().setJavaScriptEnabled(false);
             return client.getPage(url);
+        }
+
+        public Book getAllFreeNovelBook(String url){
+            Book book = new Book();
+            try {
+                page = getWebPage(url);
+                book.setName(page.getElementsByTagName("h1").get(0).getVisibleText());
+               List<HtmlAnchor> allLinks = page.getAnchors();
+               List<String> bookPageLinks = new ArrayList<>();
+               for(HtmlAnchor link : allLinks){
+                   if(link.getAttribute("class").equals("card-link")){
+                       bookPageLinks.add("https://www.allfreenovel.com" + link.getAttribute("href"));
+                   }
+               }
+
+               for (String bookPages : bookPageLinks){
+                   page = getWebPage(bookPages);
+
+                   List<DomElement> bookLines = page.getElementsByTagName("p");
+                   for (DomElement line : bookLines){
+                       book.getSentences().add(line.getVisibleText());
+                   }
+               }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return book;
         }
 
         public Book getBookByUrl(String url) {
