@@ -23,39 +23,16 @@ public class AppController {
     }
 
     @PostMapping("/download")
-    public String getBook(HttpServletResponse response, @ModelAttribute("config") UserInput input, Model model) {
+    public String getBook(HttpServletResponse response, @ModelAttribute("config") UserInput input) {
         String url = input.getInput();
-        System.out.println("post method = " + url);
-        Book responseDTO = booksRepository.getBookByUrl(url);
-        String filename = responseDTO.getName();
-
-        response.setContentType("application/force-download");
-        response.setHeader("Content-Transfer-Encoding", "binary");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + filename + ".txt\"");
-        response.setCharacterEncoding("UTF-8");
-        try {
-            PrintWriter printer = response.getWriter();
-
-            Object[] listToArray = responseDTO.getSentences().toArray();
-            for (int i = 0; i< responseDTO.getSentences().size() ; i++)
-            {
-                printer.println(listToArray[i]);
-
-            }
-            printer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        Book responseDTO = null;
+        if(url.contains("epub.pub")){
+            responseDTO = booksRepository.getBookFromEpubPubSite(url);
+        } else if (url.contains("freenovel")){
+            responseDTO = booksRepository.getBookFromAllFreeNovelSite(url);
+        } else {
+            throw new RuntimeException("Invalid URL. Input a valid URL.");
         }
-
-
-        return "index";
-    }
-
-    @PostMapping("/download2")
-    public String getBook2(HttpServletResponse response, @ModelAttribute("config") UserInput input2) {
-        String url = input2.getInput();
-        System.out.println("post method = " + url);
-        Book responseDTO = booksRepository.getAllFreeNovelBook(url);
         String filename = responseDTO.getName();
 
         response.setContentType("application/force-download");

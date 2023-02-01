@@ -2,6 +2,6 @@ package com.example.bookscraperjdktest;
 
 public interface BooksRepository {
 
-    Book getBookByUrl(String url);
-    Book getAllFreeNovelBook(String url);
+    Book getBookFromEpubPubSite(String url);
+    Book getBookFromAllFreeNovelSite(String url);
 }

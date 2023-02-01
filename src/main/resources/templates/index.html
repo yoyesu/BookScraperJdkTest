@@ -26,32 +26,20 @@
 
 <main>
     <h1>Ebook Downloader</h1>
-    <!--    <div id="nav_container"></div>-->
 
     <section th:class="instructions">
-        <h2>Follow these instructions to start:</h2>
-        <ol>
-            <li>Go to <a th:href="www.epub.pub">https://www.epub.pub</a></li>
-            <li>Choose a book and get its url. Ex. "https://www.epub.pub/book/murder-book-by-thomas-perry"</li>
-            <li>Copy the part after "book/" -> "https://www.epub.pub/book/<b>murder-book-by-thomas-perry</b>"</li>
-            <li>Paste it in the box below... and enjoy reading!</li>
-        </ol>
+        <h2>Instructions:</h2>
+        <ul>
+            <li>Find the book you like in <a href="https://www.epub.pub">https://www.epub.pub</a> or <a href="https://www.allfreenovel.com">www.allfreenovel.com</a></li>
+            <li>Copy the book url into the box below.</li>
+            <li>Click Submit</li>
+        </ul>
     </section>
 
-    <h3>Paste it here!</h3>
+    <h3></h3>
     <form th:action="@{/download}" th:method="POST" th:object="${config}">
         <label th:for="url">
             <input th:type="text" th:id="url-input" th:name="url" th:field="*{input}"/>
-        </label>
-        <label th:for="submit">
-            <input  th:type="submit" value="Submit" th:onsubmit=""/>
-        </label>
-    </form>
-
-    <h3>Download from AllFreeNovel.com</h3>
-    <form th:action="@{/download2}" th:method="POST" th:object="${config}">
-        <label th:for="url2">
-            <input th:type="text" th:id="url-input2" th:name="url2" th:field="*{input}"/>
         </label>
         <label th:for="submit">
             <input  th:type="submit" value="Submit" th:onsubmit=""/>

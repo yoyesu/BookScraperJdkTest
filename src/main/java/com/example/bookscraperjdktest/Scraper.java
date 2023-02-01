@@ -30,11 +30,15 @@ public class Scraper implements BooksRepository{
             return client.getPage(url);
         }
 
-        public Book getAllFreeNovelBook(String url){
+        public Book getBookFromAllFreeNovelSite(String url){
             Book book = new Book();
             try {
                 page = getWebPage(url);
+
+                //saving name of book
                 book.setName(page.getElementsByTagName("h1").get(0).getVisibleText());
+
+                //gathering all links to the book pages
                List<HtmlAnchor> allLinks = page.getAnchors();
                List<String> bookPageLinks = new ArrayList<>();
                for(HtmlAnchor link : allLinks){
@@ -43,23 +47,27 @@ public class Scraper implements BooksRepository{
                    }
                }
 
+               //scraping all pages and saving the lines in the dto
                for (String bookPages : bookPageLinks){
                    page = getWebPage(bookPages);
 
                    List<DomElement> bookLines = page.getElementsByTagName("p");
                    for (DomElement line : bookLines){
-                       book.getSentences().add(line.getVisibleText());
+                       if(line.getAttribute("class").equals("storyText")){
+                           book.getSentences().add(line.getVisibleText());
+                       }
                    }
                }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Oops your book couldn't be fetched. Try again later!");
             }
 
             return book;
         }
 
-        public Book getBookByUrl(String url) {
-            url = "https://www.epub.pub/book/" + url;
+        public Book getBookFromEpubPubSite(String url) {
+
+            //getting base url for the links of all chapters
             String finalStructure = getFinalUrlStructure(url);
             Book responseDTO = new Book();
 
@@ -69,18 +77,13 @@ public class Scraper implements BooksRepository{
             WebDriver driver = new ChromeDriver(options);
 
             driver.get(baseUrl);
-            WebElement toc = driver.findElement(By.id("toc"));
+//            WebElement toc = driver.findElement(By.id("toc"));
 
-            System.out.println(toc.toString());
+            //gathering the second part of the links for each chapter
             List<WebElement> links = driver.findElements(By.tagName("li"));
-            System.out.println("number of links" + links.size());
-
             for(WebElement link : links){
+                gatherBookLines(responseDTO, finalStructure + link.getDomAttribute("ref"));
 
-                    if (gatherBookLines(responseDTO, finalStructure + link.getDomAttribute("ref")) == 400) {
-                        break;
-
-                }
             }
 
             responseDTO.setName(bookTitle);
@@ -88,7 +91,9 @@ public class Scraper implements BooksRepository{
         }
 
     private String getFinalUrlStructure(String url) {
+        //(from the main url) gets the url to the actual content
         String secondUrl = generateSecondUrl(url);
+
         String finalUrlStructure = "";
         try {
             page = getWebPage(secondUrl);
@@ -97,7 +102,6 @@ public class Scraper implements BooksRepository{
             for(DomElement input : listOfInputs){
                 if(input.getAttribute("name").equals("assetUrl")){
                     String urlToTrim = input.getAttribute("value");
-                    System.out.println("urlToTrim = " + urlToTrim);
                     int indexOfSubstring = urlToTrim.indexOf("content.opf");
                     finalUrlStructure = urlToTrim.substring(0,indexOfSubstring);
                 }
@@ -105,7 +109,6 @@ public class Scraper implements BooksRepository{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("final structure = " + finalUrlStructure);
         return finalUrlStructure;
     }
 
@@ -128,7 +131,7 @@ public class Scraper implements BooksRepository{
         return secondUrl;
     }
 
-    private int gatherBookLines(Book responseDTO, String url) {
+    private void gatherBookLines(Book responseDTO, String url) {
 
             try {
 
@@ -145,9 +148,8 @@ public class Scraper implements BooksRepository{
                 }
             driver.close();
             } catch (FailingHttpStatusCodeException ex) {
-                return 400;
+                throw new RuntimeException("Page not found");
             }
-        return 200;
         }
 
 }
