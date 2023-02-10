@@ -2,17 +2,20 @@ package com.example.bookscraperjdktest;
 
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.*;
+import org.eclipse.jetty.util.log.Log;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
 import org.apache.http.conn.ssl.SSLContexts;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +23,7 @@ import java.util.List;
 public class Scraper implements BooksRepository{
 
         static HtmlPage page;
-        WebClient client = new WebClient(BrowserVersion.FIREFOX);
+        WebClient client = new WebClient(BrowserVersion.BEST_SUPPORTED);
         String bookTitle = "";
         String baseUrl = "";
 
@@ -73,19 +76,20 @@ public class Scraper implements BooksRepository{
 
             System.setProperty("webdriver.chrome.driver", "C:\\Users\\maria\\IdeaProjects\\BookScraperJdkTest\\chromedriver.exe");
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless","--user-agent=Mozilla/5.0");
+//TODO create a list of user-agents and make the app use a random one each time
+            options.addArguments("--headless","--user-agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.19 (KHTML, like Gecko) Chrome/1.0.154.50 Safari/525.19");
             WebDriver driver = new ChromeDriver(options);
-
             driver.get(baseUrl);
-//            WebElement toc = driver.findElement(By.id("toc"));
 
             //gathering the second part of the links for each chapter
             List<WebElement> links = driver.findElements(By.tagName("li"));
             for(WebElement link : links){
+
                 gatherBookLines(responseDTO, finalStructure + link.getDomAttribute("ref"));
 
             }
 
+            System.out.println("number of links = " + links.size());
             responseDTO.setName(bookTitle);
             return responseDTO;
         }
@@ -133,6 +137,9 @@ public class Scraper implements BooksRepository{
 
     private void gatherBookLines(Book responseDTO, String url) {
 
+        if(url.contains("split")){
+            url = url.replace("000", "001");
+        }
             try {
 
                 System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
