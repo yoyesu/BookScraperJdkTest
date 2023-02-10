@@ -138,7 +138,7 @@ public class Scraper implements BooksRepository{
     private void gatherBookLines(Book responseDTO, String url) {
 
         if(url.contains("split")){
-            url = url.replace("000", "001");
+            url = url.replace("split_000", "split_001");
         }
             try {
 
